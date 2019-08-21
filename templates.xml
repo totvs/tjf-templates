@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="true" context="java" deleted="false" description="TJF Basic Controller" enabled="true" name="tjfcontroller">import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.totvs.tjf.api.context.stereotype.ApiGuideline;
+import com.totvs.tjf.api.context.stereotype.ApiGuideline.ApiGuidelineVersion;
+import com.totvs.tjf.core.validation.ValidatorService;
+
+@RestController
+@RequestMapping(path = ${primary_type_name}.PATH, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+@ApiGuideline(ApiGuidelineVersion.v1)
+public class ${primary_type_name} {
+
+	public static final String PATH = "${path}";
+
+	@Autowired
+	private ValidatorService validator;
+
+	@GetMapping(path = "${getMapping}")
+	@ResponseStatus(code = ${httpStatusGet})
+	public ${typeGet} ${nameGet}() {
+
+		return null;
+	}
+
+	@PostMapping(path = "${postMapping}")
+	@ResponseStatus(code = ${httpStatusPost})
+	public ${typePost} ${namePost}(@RequestBody ${object} dto) {
+
+		validator.validate(dto).ifPresent(violations -&gt; {
+			throw new ${exception};
+		});
+
+	}
+	
+}</template><template autoinsert="true" context="java" deleted="false" description="TJF Swagger Controller" enabled="true" name="tjfcontrollerswagger">import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.totvs.tjf.api.context.stereotype.ApiGuideline;
+import com.totvs.tjf.api.context.stereotype.ApiGuideline.ApiGuidelineVersion;
+import com.totvs.tjf.core.validation.ValidatorService;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+@RestController
+@RequestMapping(path = ${primary_type_name}.PATH, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+@ApiGuideline(ApiGuidelineVersion.v1)
+public class ${primary_type_name} {
+
+	public static final String PATH = "${path}";
+
+	@Autowired
+	private ValidatorService validator;
+
+	@GetMapping(path = "${getMapping}")
+	@ApiOperation(value = "${apiOperationValueGet}", httpMethod = "GET", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiResponses(value = ${apiResponsesValueGet})
+	public ${typeGet} ${nameGet}() {
+
+		return null;
+	}
+
+	@PostMapping(path = "${postMapping}")
+	@ApiOperation(value = "${apiOperationValuePost}", httpMethod = "POST", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiResponses(value = ${apiResponsesValuePost})
+	public ${typePost} ${namePost}(@RequestBody ${object} dto) {
+
+		validator.validate(dto).ifPresent(violations -&gt; {
+			throw new ${exception};
+		});
+
+	}
+	
+}</template><template autoinsert="true" context="java" deleted="false" description="TJF Messaging Exchange" enabled="true" name="tjfexchange">import org.springframework.cloud.stream.annotation.Input;
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.SubscribableChannel;
+
+public interface ${primary_type_name} {
+  String INPUT = "${input}";
+
+  @Input(${primary_type_name}.INPUT)
+  SubscribableChannel input();
+
+  String OUTPUT = "${output}";
+
+  @Output(${primary_type_name}.OUTPUT)
+  MessageChannel output();
+}</template><template autoinsert="true" context="java" deleted="false" description="TJF Messaging Publisher" enabled="true" name="tjfpublisher">import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.stereotype.Component;
+import com.totvs.tjf.messaging.StreamPublisher;
+
+@Component
+@EnableBinding(${type}.class)
+public class ${primary_type_name} {
+
+	private ${type:exchange} exchange;
+
+	public ${primary_type_name}(${type} exchange) {
+		this.exchange = exchange;
+	}
+
+	@StreamPublisher
+	private &lt;T&gt; void publishEvent(T event, String eventName) {
+		exchange.output().send(MessageBuilder.withPayload(event).setHeader("event", eventName).build());
+	}
+
+	@StreamPublisher
+	private &lt;T&gt; void publishCommand(T command, String commandName) {
+		exchange.output().send(MessageBuilder.withPayload(command).setHeader("command", commandName).build());
+	}
+}</template><template autoinsert="true" context="java" deleted="false" description="TJF Crud Aggregate Repository " enabled="true" name="tjfrepository">import javax.persistence.EntityManager;
+
+import org.springframework.stereotype.Repository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.totvs.tjf.repository.aggregate.CrudAggregateRepository;
+
+@Repository
+public class ${primary_type_name} extends CrudAggregateRepository&lt;${type}, String&gt; {
+	
+    public ${primary_type_name}(EntityManager em, ObjectMapper mapper) {
+        super(em, mapper);
+    }
+    
+//    @Override
+//    protected String getTableName() {
+//        return "${table}";
+//    }
+    
+}</template><template autoinsert="true" context="java" deleted="false" description="TJF Messaging Subscriber" enabled="true" name="tjfsubscriber">import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.StreamListener;
+
+@EnableBinding(${type}.class)
+public class ${primary_type_name} {
+
+  @StreamListener(target = ${type}.INPUT, condition = "")
+  public void subscribe(Object command) {
+
+  }
+}</template></templates>
