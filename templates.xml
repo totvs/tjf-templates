@@ -138,12 +138,7 @@ public class ${primary_type_name} extends CrudAggregateRepository&lt;${type}, St
     public ${primary_type_name}(EntityManager em, ObjectMapper mapper) {
         super(em, mapper);
     }
-    
-//    @Override
-//    protected String getTableName() {
-//        return "${table}";
-//    }
-    
+
 }</template><template autoinsert="true" context="java" deleted="false" description="TJF Messaging Subscriber" enabled="true" name="tjfsubscriber">import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 
